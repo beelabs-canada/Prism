@@ -138,6 +138,24 @@ perl(1).
 
 #################### main pod documentation end ###################
 
+sub parent {
+        
+        my ( $self, $needle, $default ) = @_;
+    
+        return $self->basedir unless ( $needle ); # just return self if no search if performed
+    
+        my $path = $self->basedir;
+
+        while ( ! $path->is_rootdir ) {
+        
+            return $path if ( $path->basename eq $needle  );
+        
+            $path = $path->parent;
+        }
+    
+        return ( $default ) ? path( $default )->absolute : undef;
+}
+
 sub diag
 {
     require Data::Dmp;
