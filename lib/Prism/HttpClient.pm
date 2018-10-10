@@ -2,13 +2,11 @@ package Prism::HttpClient;
 use common::sense;
 use HTTP::Tiny;
 use Class::Tiny qw(http basedir);
-use Data::Dmp;
 
 sub BUILD
 {
     my ($self, $args) = @_;
-    dd $args;
-    
+        
     my %props  = (
         timeout => ( $args->{'timeout'} ) ? delete $args->{'timeout'} : 10,
         agent => ( $args->{'agent'} ) ? delete $args->{'agent'} : 'Prism crawler v1.0rc'
@@ -17,8 +15,6 @@ sub BUILD
     $self->basedir( $args->{'basedir'} );
     
     $self->http( HTTP::Tiny->new( %props ) );
-    
-    
     
     return $self;
 }

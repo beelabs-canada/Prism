@@ -1,0 +1,13 @@
+---
+http:
+    map:
+      id: {{#-sha256 }}{{#-getlink }}{{& TITLE }}{{/-getlink }}{{/-sha256 }}
+      title: {{#-striptags }}{{& TITLE }}{{/-striptags }}
+      teaser: {{ TEASER }}
+      url: {{#-getlink }} {{& TITLE }} {{/-getlink }}
+      released: {{#-epoch}}{{ PUBDATE }}{{/-epoch}}
+    agent: Canada.ca News Crawler v1.0 rc 2
+catalog:
+    - uri: https://www.canada.ca/en/news.datatable.json
+      lang: en
+      source: latest.en.json

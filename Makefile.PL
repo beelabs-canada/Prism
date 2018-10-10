@@ -19,6 +19,8 @@ my %WriteMakefileArgs = (
         'Path::Tiny' => 0.108,
         'YAML::Tiny' => 1.73,
         'Date::Manip' => 6.73,
+        'Mail/Sendmail' => 0.78,
+        'HTML::Strip'   => 2.10,
         'IO::Socket::SSL' =>  2.060
     },
     ( eval { ExtUtils::MakeMaker->VERSION(6.46) } ? () : ( META_MERGE => {

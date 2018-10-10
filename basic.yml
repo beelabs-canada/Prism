@@ -1,9 +1,0 @@
----
-  mail:
-    host: localhost
-    to: someone@example.com
-  http:
-    agent: Prism Crawler
-  catalog:
-    - uri: https://jsonplaceholder.typicode.com/todos/1
-  

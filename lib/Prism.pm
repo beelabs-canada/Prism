@@ -4,8 +4,11 @@ use common::sense;
 use Path::Tiny qw(path);
 use YAML::Tiny;
 
-use Class::Tiny qw(http config file catalog basedir), {
-    mail => { host => 'local' },
+use Prism::HttpClient;
+use Prism::Mail;
+use Prism::Mapper;
+
+use Class::Tiny qw(http config file mail catalog basedir mapper), {
     index => 0,
     total => 0 
 };
@@ -52,8 +55,22 @@ sub BUILD
         $self->http( Prism::HttpClient->new ( basedir => $self->basedir, %{ $self->config->{'http'} } ) );
     }
     
-    # override default mail settings
-    $self->mail( $self->config->{'mail'} ) if ( $self->config->{'mail'} );
+    # Mail
+    $self->mail( 
+        Prism::Mail->new ( 
+            basedir => $self->basedir,
+            host => 'local',
+            %{ $self->config->{'mail'} }
+        )
+    );
+    
+    # Mail
+    $self->mapper( 
+        Prism::Mapper->new ( 
+            basedir => $self->basedir,
+            %{ $self->config->{'http'}->{'map'} }
+        )
+    );
 
     
     return $self;
@@ -127,6 +144,16 @@ sub diag
     return Data::Dmp::dmp shift;
 }
 
+sub transform
+{
+     return shift->mapper->transform( @_ );
+}
+
+sub message
+{
+     return shift->mail->message( @_ );
+}
+
 sub download
 {
     return shift->http->download( @_ );
@@ -135,6 +162,22 @@ sub download
 sub get
 {
     return shift->http->get( @_ );
+}
+
+sub next
+{
+    my ( $self ) = shift;
+    
+    my $idx = $self->index;
+    
+    if ( $idx < $self->total )
+    {
+        $self->index( $idx + 1 );
+        return $self->catalog->[ $idx ]; 
+    }
+    
+    $self->index( 0 );
+    return undef;   
 }
 
 1;

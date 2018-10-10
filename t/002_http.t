@@ -18,5 +18,6 @@ my $sha =  sha256_hex ( path($0)->sibling( basename($0,'.t').'.json')->slurp_utf
 my $file = $object->download('https://jsonplaceholder.typicode.com/todos/1', $tempfile );
 
 ok ( sha256_hex( $file->slurp_utf8 ) , $sha );
+# lets remove the file
 $file->remove;
 

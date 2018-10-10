@@ -1,5 +1,6 @@
 TODO list for Perl module Prism
 
 - Find an alternative module for Date::Manip
+- Rework Prism::Mail to add various modules like NET::SMTP, etc.
 
 
