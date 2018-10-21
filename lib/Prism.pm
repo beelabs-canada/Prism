@@ -164,6 +164,11 @@ sub get
     return shift->http->get( @_ );
 }
 
+sub cache
+{
+    return shift->basedir->child('.cache')->touchpath;
+}
+
 sub next
 {
     my ( $self ) = shift;
