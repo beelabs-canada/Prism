@@ -42,9 +42,9 @@ sub get
     
     if ( $response->{headers}{'content-encoding'} eq 'gzip' )
     {
-        my ( $content, $decompressed, $scalar, $GunzipError) = ( $response->{ content } );
+        my ( $content, $decompressed, $GunzipError) = ( $response->{ content } );
 
-        gunzip \$content => \$decompressed, MultiStream => 1, Append => 1, TrailingData => \$scalar 
+        gunzip \$content => \$decompressed
             or die "gunzip failed: $GunzipError\n"; 
 
         $response->{ content } = $decompressed;
