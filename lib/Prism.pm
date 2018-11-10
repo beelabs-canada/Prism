@@ -10,7 +10,7 @@ use Prism::Mapper;
 
 use Class::Tiny qw(http config file mail catalog basedir mapper), {
     index => 0,
-    total => 0 
+    total => 0
 };
 
 
@@ -37,42 +37,42 @@ See Also   :
 sub BUILD
 {
     my ($self, $args) = @_;
-        
+
     # set the basedir
     $self->basedir( path($0)->absolute->parent );
-    
+
     # set the config
     $self->config( YAML::Tiny->read( $self->basedir->child( $self->file )->stringify )->[0] );
-    
+
     if ( $self->config->{'catalog'} )
     {
         $self->catalog( $self->config->{'catalog'} );
         $self->total( scalar @{ $self->config->{'catalog'} } );
-        
+
         # The will need to init a crawler
         require Prism::HttpClient;
-        
+
         $self->http( Prism::HttpClient->new ( basedir => $self->basedir, %{ $self->config->{'http'} } ) );
     }
-    
+
     # Mail
-    $self->mail( 
-        Prism::Mail->new ( 
+    $self->mail(
+        Prism::Mail->new (
             basedir => $self->basedir,
             host => 'local',
             %{ $self->config->{'mail'} }
         )
     );
-    
+
     # Mail
-    $self->mapper( 
-        Prism::Mapper->new ( 
+    $self->mapper(
+        Prism::Mapper->new (
             basedir => $self->basedir,
             %{ $self->config->{'http'}->{'map'} }
         )
     );
 
-    
+
     return $self;
 }
 
@@ -139,32 +139,36 @@ perl(1).
 #################### main pod documentation end ###################
 
 sub parent {
-        
+
         my ( $self, $needle, $default ) = @_;
-    
+
         return $self->basedir unless ( $needle ); # just return self if no search if performed
-    
+
         my $path = $self->basedir;
 
         while ( ! $path->is_rootdir ) {
-        
+
             return $path if ( $path->basename eq $needle  );
-        
+
             $path = $path->parent;
         }
-    
-        return ( $default ) ? path( $default )->absolute : undef;
-}
 
-sub diag
-{
-    require Data::Dmp;
-    return Data::Dmp::dmp shift;
+        return ( $default ) ? path( $default )->absolute : undef;
 }
 
 sub transform
 {
      return shift->mapper->transform( @_ );
+}
+
+sub overlay
+{
+     return shift->mapper->overlay( @_ );
+}
+
+sub morph
+{
+    return shift->mapper->stache->render(  @_ );
 }
 
 sub message
@@ -182,27 +186,21 @@ sub get
     return shift->http->get( @_ );
 }
 
-sub cache
-{
-    return shift->basedir->child('.cache')->touchpath;
-}
-
 sub next
 {
     my ( $self ) = shift;
-    
+
     my $idx = $self->index;
-    
+
     if ( $idx < $self->total )
     {
         $self->index( $idx + 1 );
-        return $self->catalog->[ $idx ]; 
+        return $self->catalog->[ $idx ];
     }
-    
+
     $self->index( 0 );
-    return undef;   
+    return undef;
 }
 
 1;
 # The preceding line will help the module return a true value
-
